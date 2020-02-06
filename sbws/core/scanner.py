@@ -214,7 +214,8 @@ def _pick_ideal_second_hop(relay, dest, rl, cont, is_exit):
     log.debug('Picking a 2nd hop to measure %s from %d choices. is_exit=%s',
               relay.nickname, len(candidates), is_exit)
     for min_bw_factor in [2, 1.75, 1.5, 1.25, 1]:
-        min_bw = relay.consensus_bandwidth * min_bw_factor
+        # Absolute minimum bandwidth of 600K bytes/s to solve issue #33009:
+        min_bw = max(relay.consensus_bandwidth * min_bw_factor, 600000)
         new_candidates = stem_utils.only_relays_with_bandwidth(
             cont, candidates, min_bw=min_bw)
         if len(new_candidates) > 0:
